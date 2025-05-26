@@ -7,7 +7,7 @@ class Usuarios
     {
         $hash = hash("sha256", $password);
         //VERIFICAMOS SI EXISTE EL CORREO
-        $stmt = BaseDatos::getConection()->prepare("SELECT id from usuarios where nombre_usuario_usuario=:nombre_usuario");
+        $stmt = BaseDatos::getConection()->prepare("SELECT id from usuarios where nombre_usuariogit =:nombre_usuario");
         $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
         $stmt->execute();
         // if ($stmt->fetch()) {
