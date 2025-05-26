@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase App -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+
+    <!-- Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  </head>
+  <body class="bg-black min-h-screen flex items-center justify-center">
+    <form class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md space-y-4" id="form-registro">
+      <h2 class="text-2xl font-bold text-center text-gray-800">Registro de Usuario</h2>
+
+      <div>
+        <label for="nombre_usuario" class="block text-sm font-medium text-gray-700 mb-1">
+          Nombre de usuario
+        </label>
+        <input
+          type="text"
+          id="nombre_usuario"
+          name="nombre_usuario"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div>
+        <label for="contrasena_hash" class="block text-sm font-medium text-gray-700 mb-1">
+          Contraseña
+        </label>
+        <input
+          type="password"
+          id="contrasena_hash"
+          name="contrasena_hash"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div>
+        <label for="confirm_contrasena" class="block text-sm font-medium text-gray-700 mb-1">
+          Confirmar contraseña
+        </label>
+        <input
+          type="password"
+          id="confirm_contrasena"
+          name="confirm_contrasena"
+          required
+          class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div id="error-message" class="text-red-600 text-sm hidden"></div>
+
+      <button
+        type="button"
+        id="btn_registrar"
+        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-xl hover:bg-indigo-700 transition"
+      >
+        Registrarse
+      </button>
+    </form>
+
+    <script>
+      function validatePassword() {
+        const password = document.getElementById("contrasena_hash").value;
+        const confirm = document.getElementById("confirm_contrasena").value;
+        const error = document.getElementById("error-message");
+
+        if (password !== confirm) {
+          error.textContent = "Las contraseñas no coinciden.";
+          error.classList.remove("hidden");
+          return false;
+        }
+
+        error.classList.add("hidden");
+        return true;
+      }
+
+      document.getElementById("btn_registrar").addEventListener("click", () => {
+        if (!validatePassword()) return;
+
+        const formData = new FormData();
+        formData.append("nombre_usuario", document.getElementById("nombre_usuario").value);
+        formData.append("contrasena_hash", document.getElementById("contrasena_hash").value);
+
+        fetch("http://localhost/Chat/php/public/api/RegisterController.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert("✅ Registro exitoso");
+              window.location.href = "http://localhost/Chat/src/html/login.html";
+            } else {
+              alert("⚠️ Error: " + data.message);
+            }
+          })
+          .catch((error) => {
+            alert("❌ Error de red o CORS: " + error);
+          });
+      });
+    </script>
+  </body>
+</html>
