@@ -81,6 +81,7 @@
 
     <script src="../assets/js/app.js"></script>
     <script>
+      let btn_sigin = document.getElementById("sign-in-btn");
       //Para cuando se registre el usuario.
       document.getElementById("btn_enviar_registro").addEventListener("click", () => {
         // if (!validatePassword()) return;
@@ -100,7 +101,7 @@
             if (data.success) {
               alertify.set("notifier", "position", "bottom-left");
               alertify.success("✅ Registro exitoso, bienvenido " + document.getElementById("nombre_usuario_registro").value);
-
+              btn_sigin.click();
               // window.location.href = "http://localhost/Chat/src/html/login.html";
             } else {
               alertify.set("notifier", "position", "bottom-left");
