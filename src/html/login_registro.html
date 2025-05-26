@@ -65,7 +65,7 @@
           <button class="btn transparent" id="sign-up-btn">Registrate</button>
         </div>
 
-        <img src="assets/img/undraw_maker_launch_crhe.svg" class="image" alt="Rock">
+        <img src="../assets/img/undraw_maker_launch_crhe.svg" class="image" alt="Rock">
       </div>
 
 
@@ -76,12 +76,12 @@
           <button class="btn transparent" id="sign-in-btn">Inicia Sesión.</button>
         </div>
 
-        <img src="assets/img/undraw_press_play_bx2d.svg" class="image" alt="Rock">
+        <img src="../assets/img/undraw_press_play_bx2d.svg" class="image" alt="Rock">
       </div>
     </div>
   </div>
 
-  <script src="assets/js/app.js"></script>
+  <script src="../assets/js/app.js"></script>
   <script>
     //Para cuando se registre el usuario.
 
@@ -125,11 +125,9 @@
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
+            console.log(data);
             alert("✅ Inicio de sesión exitoso");
-          } else {
-            error.textContent = "❌ " + data.message;
-            error.classList.remove("hidden");
-          }
+          } 
         })
     });
   </script>
