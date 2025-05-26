@@ -1,136 +1,172 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Responsive</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Responsive</title>
+    <script src="https://kit.fontawesome.com/3a7225da88.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <!-- AlertifyJS CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <!-- Opcional: tema adicional -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
 
-  <script src="https://kit.fontawesome.com/3a7225da88.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="../assets/css/style.css">
-</head>
+    <!-- AlertifyJS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+  </head>
 
-<body>
-  <div class="container">
-    <div class="forms-container">
-      <div class="signin-signup">
-        <form class="sign-in-form">
-          <h2 class="signin title">Iniciar Sesión</h2>
+  <body>
+    <div class="container">
+      <div class="forms-container">
+        <div class="signin-signup">
+          <form class="sign-in-form">
+            <h2 class="signin title">Iniciar Sesión</h2>
 
-          <div class="input-field">
-            <i class="fas  fa-user"></i>
-            <input type="text" placeholder="Nombre de usuario" id="nombre_usuario_login" name="nombre_usuario" required>
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input type="text" placeholder="Nombre de usuario" id="nombre_usuario_login" name="nombre_usuario" required />
+            </div>
+
+            <div class="input-field">
+              <i class="fas fa-lock"></i>
+              <input type="password" placeholder="Contraseña" id="contrasena_hash_login" name="contrasena_hash" />
+            </div>
+            <input type="button" value="Iniciar Sesión" class="btn solid" id="btn_enviar_login" />
+          </form>
+
+          <form class="sign-up-form">
+            <h2 class="signup title">Registrarse</h2>
+
+            <div class="input-field">
+              <i class="fas fa-user"></i>
+              <input type="text" placeholder="Nombre de usuario" id="nombre_usuario_registro" name="nombre_usuario" required />
+            </div>
+            <div class="input-field">
+              <i class="fas fa-lock"></i>
+              <input type="password" placeholder="Contraseña" id="contrasena_hash_registro" name="contrasena_hash" />
+            </div>
+
+            <div class="input-field">
+              <i class="fas fa-lock"></i>
+              <input type="password" placeholder="Repite la contraseña" id="confirm_contrasena" name="confirm_contrasena" />
+            </div>
+            <input type="button" value="Registrarse" class="btn solid" id="btn_enviar_registro" />
+          </form>
+        </div>
+      </div>
+
+      <div class="panels-container">
+        <div class="panel left-panel">
+          <div class="content">
+            <h3>Nuevo en DarksApp?</h3>
+            <p>Registrate con nosotros y comienza a descubrir la verdadera comunicación</p>
+            <button class="btn transparent" id="sign-up-btn">Registrate</button>
           </div>
 
-          <div class="input-field">
-            <i class="fas  fa-lock"></i>
-            <input type="password" placeholder="Contraseña" id="contrasena_hash_login" name="contrasena_hash">
-          </div>
-          <input type="button" value="Iniciar Sesión" class="btn solid" id="btn_enviar_login">
+          <img src="../assets/img/undraw_maker_launch_crhe.svg" class="image" alt="Rock" />
+        </div>
 
-        </form>
-
-        <form class="sign-up-form">
-          <h2 class="signup title">Registrarse</h2>
-
-          <div class="input-field">
-            <i class="fas  fa-user"></i>
-            <input type="text" placeholder="Nombre de usuario" id="nombre_usuario_registro" name="nombre_usuario"
-              required>
-          </div>
-          <div class="input-field">
-            <i class="fas  fa-lock"></i>
-            <input type="password" placeholder="Contraseña" id="contrasena_hash_registro" name="contrasena_hash">
+        <div class="panel right-panel">
+          <div class="content">
+            <h3>Uno de nosotros?</h3>
+            <p>Inicia sesión con tu cuenta</p>
+            <button class="btn transparent" id="sign-in-btn">Inicia Sesión.</button>
           </div>
 
-          <div class="input-field">
-            <i class="fas  fa-lock"></i>
-            <input type="password" placeholder="Repite la contraseña" id="confirm_contrasena" name="confirm_contrasena">
-          </div>
-          <input type="button" value="Registrarse" class="btn solid" id="btn_enviar_registro">
-
-
-
-        </form>
+          <img src="../assets/img/undraw_press_play_bx2d.svg" class="image" alt="Rock" />
+        </div>
       </div>
     </div>
 
+    <script src="../assets/js/app.js"></script>
+    <script>
+      //Para cuando se registre el usuario.
+      document.getElementById("btn_enviar_registro").addEventListener("click", () => {
+        // if (!validatePassword()) return;
+        let usuario = document.getElementById("nombre_usuario_registro").value;
 
+        const formData = new FormData();
+        formData.append("nombre_usuario", document.getElementById("nombre_usuario_registro").value);
+        formData.append("contrasena_hash", document.getElementById("contrasena_hash_registro").value);
 
-    <div class="panels-container">
-      <div class="panel left-panel">
-        <div class="content">
-          <h3>Nuevo en DarksApp?</h3>
-          <p>Registrate con nosotros y comienza a descubrir la verdadera comunicación</p>
-          <button class="btn transparent" id="sign-up-btn">Registrate</button>
-        </div>
-
-        <img src="../assets/img/undraw_maker_launch_crhe.svg" class="image" alt="Rock">
-      </div>
-
-
-      <div class="panel right-panel">
-        <div class="content">
-          <h3>Uno de nosotros?</h3>
-          <p>Inicia sesión con tu cuenta</p>
-          <button class="btn transparent" id="sign-in-btn">Inicia Sesión.</button>
-        </div>
-
-        <img src="../assets/img/undraw_press_play_bx2d.svg" class="image" alt="Rock">
-      </div>
-    </div>
-  </div>
-
-  <script src="../assets/js/app.js"></script>
-  <script>
-    //Para cuando se registre el usuario.
-
-    document.getElementById("btn_enviar_registro").addEventListener("click", () => {
-      // if (!validatePassword()) return;
-
-      const formData = new FormData();
-      formData.append("nombre_usuario", document.getElementById("nombre_usuario_registro").value);
-      formData.append("contrasena_hash", document.getElementById("contrasena_hash_registro").value);
-
-      fetch("http://localhost/Chat/php/public/api/RegisterController.php", {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            alert("✅ Registro exitoso");
-            // window.location.href = "http://localhost/Chat/src/html/login.html";
-          } else {
-            alert("❌ " + data.message);
-          }
+        if (!validatePassword()) return;
+        fetch("http://localhost/Chat/php/public/api/RegisterController.php", {
+          method: "POST",
+          body: formData,
         })
-        .catch((err) => {
-          alert("❌ Error de red: " + err);
-        });
-    });
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              alertify.set("notifier", "position", "bottom-left");
+              alertify.success("✅ Registro exitoso, bienvenido " + document.getElementById("nombre_usuario_registro").value);
 
-    //Para cuando el usuario haga login
-    document.getElementById("btn_enviar_login").addEventListener("click", () => {
-      const usuario = document.getElementById("nombre_usuario_login").value;
-      const contrasena = document.getElementById("contrasena_hash_login").value;
-      const formData = new FormData();
-      formData.append("nombre_usuario", usuario);
-      formData.append("contrasena_hash", contrasena);
+              // window.location.href = "http://localhost/Chat/src/html/login.html";
+            } else {
+              alertify.set("notifier", "position", "bottom-left");
+              alertify.error("❌ " + data.message);
+            }
+          })
+          .catch((err) => {
+            alertify.error("❌ Error de red: " + err);
+          });
+      });
 
-      fetch("http://localhost/Chat/php/public/api/LoginController.php", {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            console.log(data);
-            alert("✅ Inicio de sesión exitoso");
-          } 
+      //Para cuando el usuario haga login
+      document.getElementById("btn_enviar_login").addEventListener("click", () => {
+        const usuario = document.getElementById("nombre_usuario_login").value;
+        const contrasena = document.getElementById("contrasena_hash_login").value;
+        const formData = new FormData();
+        formData.append("nombre_usuario", usuario);
+        formData.append("contrasena_hash", contrasena);
+
+        fetch("http://localhost/Chat/php/public/api/LoginController.php", {
+          method: "POST",
+          body: formData,
         })
-    });
-  </script>
-</body>
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              console.log(data);
+              alertify.set("notifier", "position", "bottom-right");
+              alertify.success("✅ Inicio de sesión exitoso, bienvenido <strong>" + usuario) + "<strong>";
+            } else {
+              if (usuario == "" || contrasena == "") {
+                alertify.set("notifier", "position", "bottom-right");
+                alertify.error("❌ Debes introducir todos los campos ");
+              } else {
+                alertify.error("❌ Usuario o contraseña incorrectos");
+              }
+            }
+          });
+      });
 
+      function validatePassword() {
+        var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])([A-Za-z\d$@$!%*?&]|[^ ]){8,15}$/;
+        if (document.getElementById("nombre_usuario_registro").value == "") {
+          alertify.set("notifier", "position", "bottom-left");
+          alertify.error("❌ Debes introducir un nombre de usuario");
+          return false;
+        }
+        if (document.getElementById("contrasena_hash_registro").value == "" || document.getElementById("confirm_contrasena").value == "") {
+          alertify.set("notifier", "position", "bottom-left");
+          alertify.error("❌ Debes introducir contraseña y confirmar contraseña");
+          return false;
+        }
+        if (document.getElementById("contrasena_hash_registro").value != document.getElementById("confirm_contrasena").value) {
+          alertify.set("notifier", "position", "bottom-left");
+          alertify.error("❌ Las contraseñas no coinciden");
+          return false;
+        }
+
+        if (document.getElementById("contrasena_hash_registro").value.match(regex)) {
+          return true;
+        } else {
+          alertify.set("notifier", "position", "bottom-left");
+          alertify.error("❌ La contraseña debe tener al menos 8 caracteres, una mayuscula, un minúscula, un número y un carácter especial");
+          return false;
+        }
+      }
+    </script>
+  </body>
 </html>
