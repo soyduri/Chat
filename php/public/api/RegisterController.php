@@ -7,17 +7,16 @@ header("Content-Type: application/json");
 
 require_once("../../modelo/Usuarios.php");
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+// if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+//     http_response_code(200);
+//     exit();
+// }
 
 $response = [];
 
 if (!empty($_POST['nombre_usuario']) && !empty($_POST['contrasena_hash'])) {
     $nombre_usuario = $_POST['nombre_usuario'];
-    $contrasena_plana = $_POST['contrasena_hash']; // ✅ no hacemos hash aquí
-    $contrasena_hasheada = hash('sha256', $contrasena_plana);
+    $contrasena_hasheada = hash('sha256',  $_POST['contrasena_hash']);
 
     $resultado = Usuarios::registrarUsuario($nombre_usuario, $contrasena_hasheada);
 

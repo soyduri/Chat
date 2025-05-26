@@ -5,7 +5,7 @@ class Usuarios
 {
     public static function registrarUsuario($nombre_usuario, $password_plano)
     {
-
+        
         $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
         $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
         $stmt->execute();
