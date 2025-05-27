@@ -5,7 +5,7 @@ class Usuarios
 {
     public static function registrarUsuario($nombre_usuario, $password_plano)
     {
-        
+
         $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
         $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
         $stmt->execute();
@@ -19,7 +19,18 @@ class Usuarios
         );
         $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
         $stmt->bindParam(":password", $password_plano, PDO::PARAM_STR);
+        return $stmt->execute() ? true : "Error al registrar el usuario.";
+    }
 
+    public static function registrarUsuarioEstado($nombre_usuario)
+    {
+        $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+        $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
+        $stmt->execute();
+        $row =  $stmt->fetch();
+        $stmt = BaseDatos::getConection()->prepare(
+            "INSERT INTO estado_usuario (usuario_id, en_linea, ultima_conexion) VALUES (".$row['id'].",0,null)"
+        );
         return $stmt->execute() ? true : "Error al registrar el usuario.";
     }
 

@@ -18,6 +18,11 @@ if (!empty($_POST['nombre_usuario']) && !empty($_POST['contrasena_hash'])) {
 
     if (Usuarios::getUsuarioByNombrePassword($nombre_usuario, $contrasena_hasheada)) {
         $_SESSION['nombre_usuario'] = $nombre_usuario;
+        
+
+
+
+
 
         echo json_encode([
             "success" => true,

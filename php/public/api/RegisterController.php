@@ -11,6 +11,7 @@ require_once("../../modelo/Usuarios.php");
 //     http_response_code(200);
 //     exit();
 // }
+//Contraseña para crear usuarios: Danis@1234
 
 $response = [];
 
@@ -19,7 +20,7 @@ if (!empty($_POST['nombre_usuario']) && !empty($_POST['contrasena_hash'])) {
     $contrasena_hasheada = hash('sha256',  $_POST['contrasena_hash']);
 
     $resultado = Usuarios::registrarUsuario($nombre_usuario, $contrasena_hasheada);
-
+    $insertar_estado = Usuarios::registrarUsuarioEstado($nombre_usuario);
     if ($resultado === true) {
         $response = [
             "success" => true,
@@ -37,5 +38,4 @@ if (!empty($_POST['nombre_usuario']) && !empty($_POST['contrasena_hash'])) {
         "message" => "Faltan campos obligatorios"
     ];
 }
-
 echo json_encode($response);
