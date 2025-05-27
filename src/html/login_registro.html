@@ -14,7 +14,6 @@
     <!-- AlertifyJS JS -->
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
   </head>   
-
   <body>
     <div class="container">
       <div class="forms-container">
@@ -129,6 +128,7 @@
               console.log(data);
               alertify.set("notifier", "position", "bottom-right");
               alertify.success("✅ Inicio de sesión exitoso, bienvenido <strong>" + usuario) + "<strong>";
+              window.location.href = "../html/principal.html";
             } else {
               if (usuario == "" || contrasena == "") {
                 alertify.set("notifier", "position", "bottom-right");

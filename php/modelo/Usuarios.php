@@ -3,6 +3,7 @@ require_once("BaseDatos.php");
 
 class Usuarios
 {
+    //Registramos usuario en la tabla de usuarios
     public static function registrarUsuario($nombre_usuario, $password_plano)
     {
 
@@ -21,7 +22,7 @@ class Usuarios
         $stmt->bindParam(":password", $password_plano, PDO::PARAM_STR);
         return $stmt->execute() ? true : "Error al registrar el usuario.";
     }
-
+    //Guardamos los datos en la tabla estado_usuario
     public static function registrarUsuarioEstado($nombre_usuario)
     {
         $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
@@ -29,11 +30,11 @@ class Usuarios
         $stmt->execute();
         $row =  $stmt->fetch();
         $stmt = BaseDatos::getConection()->prepare(
-            "INSERT INTO estado_usuario (usuario_id, en_linea, ultima_conexion) VALUES (".$row['id'].",0,null)"
+            "INSERT INTO estado_usuario (usuario_id, en_linea, ultima_conexion) VALUES (" . $row['id'] . ",0,null)"
         );
         return $stmt->execute() ? true : "Error al registrar el usuario.";
     }
-
+    //Funcion para el login.
     public static function getUsuarioByNombrePassword($nombre_usuario, $password_plano, $type_fetch = PDO::FETCH_OBJ)
     {
 
@@ -45,5 +46,19 @@ class Usuarios
         $stmt->execute();
 
         return $stmt->fetchAll($type_fetch);
+    }
+    //Función para actualizar el estado de en linea o no.
+    public static function UpdateEstado($nombre_usuario,$en_linea)
+    {
+
+        $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+        $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
+        $stmt->execute();
+        //La función fetch nos devuelve toda la fila  que coincidan con el select que hemos hecho la consulta
+        $row =  $stmt->fetch();
+        $stmt = BaseDatos::getConection()->prepare(
+            "UPDATE estado_usuario SET (en_linea) VALUES ($en_linea) where id =" . $row[`id`] . ""
+        );
+        return $stmt->execute() ? true : "Error al actualizar el usuario.";
     }
 }
