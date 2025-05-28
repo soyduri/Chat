@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>DarksApp</title>
-    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/bootstrap.css" />
     <link rel="stylesheet" href="../css/chat.css" />
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -39,8 +39,22 @@
       <section id="main-left" class="main-left">
         <!-- header -->
         <div id="header-left" class="header-left">
-          <span class="glyphicon glyphicon-menu-hamburger hamburger-btn"></span>
-          <span class="glyphicon glyphicon-search search-btn"></span>
+          <!-- <span class="glyphicon glyphicon-menu-hamburger hamburger-btn"></span> -->
+          <div class="input-wrapper">
+            <button class="icon">
+              <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
+                  stroke="#fff"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+                <path d="M22 22L20 20" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
+            <input type="text" name="text" class="input" placeholder="search.." />
+          </div>
           <!-- self-profile -->
           <div id="self-info" class="self-info">
             <!-- photo -->
@@ -48,7 +62,7 @@
               <img src="../images/ava4.jpg" alt="" />
             </div>
             <!-- name -->
-            <h4 class="name your-name">Iqbal Taufiq</h4>
+            <h4 class="name your-name">Los Danis</h4>
 
             <!-- setting btn -->
             <span class="glyphicon glyphicon-cog"></span>
@@ -209,6 +223,36 @@
             <!-- notification badge -->
             <span class="badge notif-badge">7</span>
           </div>
+          <div id="friends" class="friends">
+            <!-- photo -->
+            <div class="profile friends-photo">
+              <img src="../images/ava7.jpg" alt="" />
+            </div>
+
+            <div class="friends-credent">
+              <!-- name -->
+              <span class="friends-name">Manuel Neuer</span>
+              <!-- last message -->
+              <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
+            </div>
+            <!-- notification badge -->
+            <span class="badge notif-badge">7</span>
+          </div>
+          <div id="friends" class="friends">
+            <!-- photo -->
+            <div class="profile friends-photo">
+              <img src="../images/ava7.jpg" alt="" />
+            </div>
+
+            <div class="friends-credent">
+              <!-- name -->
+              <span class="friends-name">Manuel Neuer</span>
+              <!-- last message -->
+              <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
+            </div>
+            <!-- notification badge -->
+            <span class="badge notif-badge">7</span>
+          </div>
 
           <div id="friends" class="friends">
             <!-- photo -->
@@ -245,7 +289,14 @@
           <div class="some-btn">
             <span class="glyphicon glyphicon-facetime-video"></span>
             <span class="glyphicon glyphicon-earphone"></span>
-            <span class="glyphicon glyphicon-option-vertical option-btn"></span>
+            <span class="glyphicon glyphicon-option-vertical option-btn" id="option-btn">
+              <div class="dropdown text-end">
+                <ul class="dropdown-menu custom-dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item custom-dropdown-item" href="#">Bloquear usuario</a></li>
+                  <li><a class="dropdown-item custom-dropdown-item" href="#">Vaciar chat</a></li>
+                </ul>
+              </div>
+            </span>
           </div>
         </div>
 
@@ -344,9 +395,17 @@
           <input id="type-area" class="type-area" placeholder="Type something..." type="text" />
           <!-- attachment btn -->
           <div class="attach-btn">
-            <span class="glyphicon glyphicon-paperclip file-btn"></span>
-            <span class="glyphicon glyphicon-camera"></span>
-            <span class="glyphicon glyphicon-picture"></span>
+            <!-- Vista previa de la cámara en escritorio -->
+            <video id="videoPreview" width="320" height="240" autoplay style="display: none; margin-top: 10px"></video>
+            <span class="glyphicon glyphicon-paperclip file-btn icon-hover-scale" id="spanFile">
+              <input type="file" style="display: none" id="inputFile" />
+            </span>
+            <span class="glyphicon glyphicon-camera icon-hover-scale" id="spanCam">
+              <input type="file" accept="image/*" capture="environment" style="display: none" id="inputCam" />
+            </span>
+            <span class="glyphicon glyphicon-picture icon-hover-scale" id="spanImg">
+              <input type="file" style="display: none" id="inputImg" />
+            </span>
           </div>
           <!-- send btn -->
           <button class="btn-enviar">
@@ -368,7 +427,25 @@
     </div>
 
     <!-- jQuey, Popper, BootstrapJS -->
-    <script src="javascript/jquery-3.3.1.min.js"></script>
-    <script src="javascript/bootstrap.min.js"></script>
+    <script src="../javascript/jquery-3.3.1.min.js"></script>
+    <script src="../javascript/bootstrap.min.js"></script>
+    <script src="../javascript/bootstrap.min.js"></script>
+    <script src="../javascript/botonesEnviar.js"></script>
+    <script>
+      const optionBtn = document.querySelector("#option-btn");
+      const dropdownMenu = optionBtn.querySelector("ul");
+
+      optionBtn.addEventListener("click", function (e) {
+        e.stopPropagation(); // evita que el clic se propague al documento
+        dropdownMenu.style.display = "block";
+      });
+
+      document.addEventListener("click", function (e) {
+        // Si el clic NO es dentro del botón o el menú, ocultamos el menú
+        if (!optionBtn.contains(e.target)) {
+          dropdownMenu.style.display = "none";
+        }
+      });
+    </script>
   </body>
 </html>
