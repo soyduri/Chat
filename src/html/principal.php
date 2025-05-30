@@ -24,19 +24,42 @@ session_start();
       };
       conn.onmessage = function(e) {
         let respuesta = JSON.parse(e.data);
-        console.log("nombre: " + respuesta.nombre + "Mensaje: " + respuesta.mensaje);
+
+        const chatArea = document.getElementById("chat-area");
+
+        const chatDiv = document.createElement("div");
+        chatDiv.className = "friends-chat";
+        chatDiv.innerHTML = `
+                              <div class="profile friends-chat-photo">
+                                <img src="../images/ava2.jpg" alt="" />
+                              </div>
+                              <div class="friends-chat-content">
+                                  <p class="friends-chat-name">${respuesta.nombre}</p>
+                                  <p class="friends-chat-balloon">${respuesta.mensaje}</p>
+                                  <h5 class="chat-datetime">${new Date().toLocaleString()}</h5>
+                              </div>
+                            `;
+
+        chatArea.appendChild(chatDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
       };
+
 
       let btn_enviar = document.getElementById("btn_enviar_mensaje");
       btn_enviar.addEventListener("click", function() {
+        //Por si acaso evitamos la recarga de la pagina. 
+        // e.preventDefault();
         var nombre_amigo = document.getElementById("nombre_amigo").textContent;
-        var mensaje = document.getElementById("type-area").value;
+        var inputMensaje = document.getElementById("type-area");
+        var mensaje = inputMensaje.value;
 
         var enviar = {
           nombre: nombre_amigo,
           mensaje: mensaje
         };
         conn.send(JSON.stringify(enviar));
+
+        inputMensaje.value = "";
       });
     });
   </script>
@@ -95,7 +118,7 @@ session_start();
         foreach (Usuarios::mostrarAllUsuarios() as $usuario) {
         ?>
           <?php if ($_SESSION["nombre_usuario"] != $usuario->nombre_usuario) { ?>
-            <div id="friends" <?php if ($usuario->en_linea == 0) { ?> style="background-color: red;" <?php } ?> class="friends" data-key= <?php $usuario->id ?>>
+            <div id="friends" <?php if ($usuario->en_linea == 0) { ?> style="background-color: red;" <?php } ?> class="friends" data-key="<?php echo $usuario->id ?>">
               <!-- photo -->
               <div class="profile friends-photo">
                 <img src="../images/ava2.jpg" alt="" />
@@ -114,176 +137,7 @@ session_start();
           <?php } ?>
         <?php } ?>
 
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava3.jpg" alt="" />
-          </div>
 
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Andre Silva</span>
-            <!-- last message -->
-            <span class="friends-message">How are you?</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">999</span>
-        </div>
-
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava5.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Marco Reus</span>
-            <!-- last message -->
-            <span class="friends-message">Sehr gud, Danke!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">26</span>
-        </div>
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava5.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Marco Reus</span>
-            <!-- last message -->
-            <span class="friends-message">Sehr gud, Danke!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">26</span>
-        </div>
-
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava6.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Antoine Griezmann</span>
-            <!-- last message -->
-            <span class="friends-message">Let's 1v1 with me on FIFA20! Winner takes it all!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava6.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Antoine Griezmann</span>
-            <!-- last message -->
-            <span class="friends-message">Let's 1v1 with me on FIFA20! Winner takes it all!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava7.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Manuel Neuer</span>
-            <!-- last message -->
-            <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava7.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Manuel Neuer</span>
-            <!-- last message -->
-            <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava7.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Manuel Neuer</span>
-            <!-- last message -->
-            <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava7.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Manuel Neuer</span>
-            <!-- last message -->
-            <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava7.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Manuel Neuer</span>
-            <!-- last message -->
-            <span class="friends-message">Congrats on winning Serie A for the 99th time!</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
-
-        <div id="friends" class="friends">
-          <!-- photo -->
-          <div class="profile friends-photo">
-            <img src="../images/ava1.jpg" alt="" />
-          </div>
-
-          <div class="friends-credent">
-            <!-- name -->
-            <span class="friends-name">Mattia de Sciglio</span>
-            <!-- last message -->
-            <span class="friends-message">Hi, are you ready for the match?</span>
-          </div>
-          <!-- notification badge -->
-          <span class="badge notif-badge">7</span>
-        </div>
       </div>
     </section>
 
@@ -423,7 +277,7 @@ session_start();
           </span>
         </div>
         <!-- send btn -->
-        <button class="btn-enviar" id="btn_enviar_mensaje">
+        <button type="button" class="btn-enviar" id="btn_enviar_mensaje">
           <div class="svg-wrapper-1">
             <div class="svg-wrapper">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -461,14 +315,30 @@ session_start();
       }
     });
 
-    var id_usuario = "";
+    // var id_usuario = "";
 
-    document.querySelectorAll("#id_usuario").forEach(element => {
+    document.querySelectorAll(".friends").forEach(element => {
       element.addEventListener("click", function() {
-        var id_usuario = element.textContent;
-        console.log(id_usuario);
+        var id_usuario = element.dataset.key;
+        fetch(`http://localhost/Chat/php/public/api/ChatController.php?id=${id_usuario}`)
+          .then(res => res.json())
+          .then(usuario => {
+            // Cambiar nombre en la cabecera
+            document.getElementById("nombre_amigo").textContent = usuario.nombre_usuario;
+
+            // // Cambiar imagen de cabecera si tienes una ruta dinámica en la DB
+            // if (usuario.foto_perfil) {
+            //   document.querySelector("#header-img img").src = usuario.foto_perfil;
+            // }
+
+            window.usuarioSeleccionadoId = usuario.id;
+          })
+          .catch(err => console.error("Error al obtener datos del usuario:", err));
       })
     });
+
+
+    
   </script>
 </body>
 
