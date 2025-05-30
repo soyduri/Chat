@@ -34,17 +34,15 @@ class Usuarios
         return $stmt->execute() ? true : "Error al registrar el usuario.";
     }
     //Funcion para el login.
-    public static function getUsuarioByNombrePassword($nombre_usuario, $password_plano, $type_fetch = PDO::FETCH_OBJ)
+    public static function getUsuarioByNombre($nombre_usuario, $type_fetch = PDO::FETCH_ASSOC)
     {
-
         $stmt = BaseDatos::getConection()->prepare(
-            "SELECT nombre_usuario FROM usuarios WHERE nombre_usuario = :nombre_usuario AND contrasena_hash = :contrasena_hash"
+            "SELECT id, nombre_usuario, contrasena_hash FROM usuarios WHERE nombre_usuario = :nombre_usuario"
         );
         $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
-        $stmt->bindParam(":contrasena_hash", $password_plano, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetchAll($type_fetch);
+        return $stmt->fetch($type_fetch); // Solo un usuario
     }
     //Función para actualizar el estado de en linea o no.
     public static function UpdateEstado($nombre_usuario, $en_linea)
@@ -80,5 +78,17 @@ class Usuarios
         $stmt->bindParam(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll($type_fetch);
+    }
+
+    public static function registrarMensaje($emisor_id, $receptor_id, $contenido)
+    {
+
+        $stmt = BaseDatos::getConection()->prepare(
+            "INSERT INTO mensajes(emisor_id, receptor_id,contenido) VALUES (:emisor_id, :receptor_id,:contenido)"
+        );
+        $stmt->bindParam(":emisor_id", $emisor_id, PDO::PARAM_INT);
+        $stmt->bindParam(":receptor_id", $receptor_id, PDO::PARAM_INT);
+        $stmt->bindParam(":contenido", $contenido, PDO::PARAM_STR);
+        return $stmt->execute() ? true : "Error al registrar el mensaje.";
     }
 }

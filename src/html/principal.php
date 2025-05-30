@@ -44,23 +44,54 @@ session_start();
         chatArea.scrollTop = chatArea.scrollHeight;
       };
 
-
+      var receptor = document.getElementById("nombre_amigo");
+      var emisor = document.getElementById("emisor")
       let btn_enviar = document.getElementById("btn_enviar_mensaje");
       btn_enviar.addEventListener("click", function() {
-        //Por si acaso evitamos la recarga de la pagina. 
+        // Evitamos la recarga de la página (si usas un formulario real)
         // e.preventDefault();
+
+        var id_receptor = receptor.dataset.receptor;
+        console.log(id_receptor)
+        var id_emisor = emisor.dataset.emisor;
+        console.log(id_emisor)
         var nombre_amigo = document.getElementById("nombre_amigo").textContent;
-        var inputMensaje = document.getElementById("type-area");
-        var mensaje = inputMensaje.value;
 
-        var enviar = {
-          nombre: nombre_amigo,
-          mensaje: mensaje
+        var contenido_mensaje = document.getElementById("type-area");
+        var mensaje = contenido_mensaje.value;
+
+        var enviar_datos = {
+          "receptor_id": id_receptor,
+          "emisor_id": id_emisor,
+          "contenido": mensaje,
         };
-        conn.send(JSON.stringify(enviar));
+        console.log(enviar_datos);
 
-        inputMensaje.value = "";
+        // Enviamos al backend con fetch
+        fetch("http://localhost/Chat/php/public/api/ChatController.php", {
+            method: "POST",
+            body: JSON.stringify(enviar_datos)
+          })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              console.log("Mensaje guardado:", data);
+            } else {
+              console.error("Error en backend:", data);
+            }
+          })
+          .catch((err) => {
+            console.error("Error en fetch:", err);
+          });
+
+        // // Enviamos por WebSocket también (si aplica)
+        // if (typeof conn !== "undefined" && conn.readyState === WebSocket.OPEN) {
+        //   conn.send(JSON.stringify(enviar_datos)); // Usamos el mismo objeto
+        // }
+
+        contenido_mensaje.value = "";
       });
+
     });
   </script>
 </head>
@@ -94,7 +125,11 @@ session_start();
             <img src="../images/ava4.jpg" alt="" />
           </div>
           <!-- name -->
-          <h4 class="name your-name">Los Danis</h4>
+          <h4 class="name your-name" name="emisor_id" id="emisor" data-emisor="<?php echo isset($_SESSION['id']) ? $_SESSION['id'] : ''; ?>">
+            <?php echo isset($_SESSION["nombre_usuario"]) ? $_SESSION["nombre_usuario"] : "No hay usuario logado"; ?>
+          </h4>
+
+
 
           <!-- setting btn -->
           <span class="glyphicon glyphicon-cog"></span>
@@ -152,8 +187,7 @@ session_start();
         </div>
 
         <!-- name -->
-        <h4 class="name friend-name" id="nombre_amigo">Mario Gomez</h4>
-
+        <h4 class="name friend-name" id="nombre_amigo" data-receptor="" name="receptor_id"> <!--Aqui va el nombre cuando pinchas --></h4>
         <!-- some btn -->
         <div class="some-btn">
           <span class="glyphicon glyphicon-facetime-video"></span>
@@ -172,125 +206,39 @@ session_start();
       <!-- chat area -->
       <div id="chat-area" class="chat-area">
         <!-- chat content -->
-
-        <!-- FRIENDS CHAT TEMPLATE -->
-        <div id="friends-chat" class="friends-chat">
-          <div class="profile friends-chat-photo">
-            <img src="../images/ava2.jpg" alt="" />
+        <!-- typing area -->
+        <div id="typing-area" class="typing-area">
+          <!-- input form -->
+          <input id="type-area" class="type-area" placeholder="Type something..." type="text" name="contenido" />
+          <!-- attachment btn -->
+          <div class="attach-btn">
+            <!-- Vista previa de la cámara en escritorio -->
+            <video id="videoPreview" width="320" height="240" autoplay style="display: none; margin-top: 10px"></video>
+            <span class="glyphicon glyphicon-paperclip file-btn icon-hover-scale" id="spanFile">
+              <input type="file" style="display: none" id="inputFile" />
+            </span>
+            <span class="glyphicon glyphicon-camera icon-hover-scale" id="spanCam">
+              <input type="file" accept="image/*" capture="environment" style="display: none" id="inputCam" />
+            </span>
+            <span class="glyphicon glyphicon-picture icon-hover-scale" id="spanImg">
+              <input type="file" style="display: none" id="inputImg" />
+            </span>
           </div>
-          <div class="friends-chat-content">
-            <p class="friends-chat-name">Mario Gomez</p>
-            <p class="friends-chat-balloon">Yo Dybala!</p>
-            <h5 class="chat-datetime">Sun, Aug 30 | 15:41</h5>
-          </div>
-        </div>
-
-        <!-- YOUR CHAT TEMPLATE -->
-        <div id="your-chat" class="your-chat">
-          <p class="your-chat-balloon">'sup</p>
-          <p class="chat-datetime"><span class="glyphicon glyphicon-ok"></span> Sun, Aug 30 | 15:45</p>
-        </div>
-
-        <!-- FRIENDS CHAT TEMPLATE -->
-        <div id="friends-chat" class="friends-chat">
-          <div class="profile friends-chat-photo">
-            <img src="../images/ava2.jpg" alt="" />
-          </div>
-          <div class="friends-chat-content">
-            <p class="friends-chat-name">Mario Gomez</p>
-            <p class="friends-chat-balloon">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque vero iusto perferendis nemo ad ipsam mollitia ducimus? Et possimus numquam minus impedit tempora, nulla, enim in magni
-              accusamus dolore fugiat nisi culpa exercitationem fuga consequatur eos aliquam perspiciatis. Minima praesentium expedita facere quod labore magnam eveniet commodi veniam porro placeat?
-            </p>
-            <h5 class="chat-datetime">Sun, Aug 30 | 15:41</h5>
-          </div>
-        </div>
-
-        <!-- FRIENDS CHAT TEMPLATE -->
-        <div id="friends-chat" class="friends-chat">
-          <div class="profile friends-chat-photo">
-            <img src="../images/ava2.jpg" alt="" />
-          </div>
-          <div class="friends-chat-content">
-            <p class="friends-chat-name">Mario Gomez</p>
-            <p class="friends-chat-balloon">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, consequatur!</p>
-            <h5 class="chat-datetime">Sun, Aug 30 | 15:41</h5>
-          </div>
-        </div>
-
-        <!-- YOUR CHAT TEMPLATE -->
-        <div id="your-chat" class="your-chat">
-          <p class="your-chat-balloon">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae amet modi aliquid molestiae. Adipisci, similique dolor expedita error explicabo at cupiditate exercitationem dolorem
-            corrupti. Pariatur.
-          </p>
-          <p class="chat-datetime"><span class="glyphicon glyphicon-ok"></span> Sun, Aug 30 | 15:45</p>
-        </div>
-
-        <!-- FRIENDS CHAT TEMPLATE -->
-        <div id="friends-chat" class="friends-chat">
-          <div class="profile friends-chat-photo">
-            <img src="../images/ava2.jpg" alt="" />
-          </div>
-          <div class="friends-chat-content">
-            <p class="friends-chat-name">Mario Gomez</p>
-            <p class="friends-chat-balloon">Crap! I forgot my shoes. Can you bring extra pair for me?</p>
-            <h5 class="chat-datetime">Sun, Aug 30 | 15:41</h5>
-          </div>
-        </div>
-
-        <!-- YOUR CHAT TEMPLATE -->
-        <div id="your-chat" class="your-chat">
-          <p class="your-chat-balloon">sure m8</p>
-          <p class="chat-datetime"><span class="glyphicon glyphicon-ok"></span> Sun, Aug 30 | 15:45</p>
-        </div>
-
-        <!-- FRIENDS CHAT TEMPLATE -->
-        <div id="friends-chat" class="friends-chat">
-          <div class="profile friends-chat-photo">
-            <img src="../images/ava2.jpg" alt="" />
-          </div>
-          <div class="friends-chat-content">
-            <p class="friends-chat-name">Mario Gomez</p>
-            <p class="friends-chat-balloon">Thanks!</p>
-            <h5 class="chat-datetime">Sun, Aug 30 | 15:41</h5>
-          </div>
-        </div>
-      </div>
-
-      <!-- typing area -->
-      <div id="typing-area" class="typing-area">
-        <!-- input form -->
-        <input id="type-area" class="type-area" placeholder="Type something..." type="text" />
-        <!-- attachment btn -->
-        <div class="attach-btn">
-          <!-- Vista previa de la cámara en escritorio -->
-          <video id="videoPreview" width="320" height="240" autoplay style="display: none; margin-top: 10px"></video>
-          <span class="glyphicon glyphicon-paperclip file-btn icon-hover-scale" id="spanFile">
-            <input type="file" style="display: none" id="inputFile" />
-          </span>
-          <span class="glyphicon glyphicon-camera icon-hover-scale" id="spanCam">
-            <input type="file" accept="image/*" capture="environment" style="display: none" id="inputCam" />
-          </span>
-          <span class="glyphicon glyphicon-picture icon-hover-scale" id="spanImg">
-            <input type="file" style="display: none" id="inputImg" />
-          </span>
-        </div>
-        <!-- send btn -->
-        <button type="button" class="btn-enviar" id="btn_enviar_mensaje">
-          <div class="svg-wrapper-1">
-            <div class="svg-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path
-                  fill="currentColor"
-                  d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
-              </svg>
+          <!-- send btn -->
+          <button type="button" class="btn-enviar" id="btn_enviar_mensaje">
+            <div class="svg-wrapper-1">
+              <div class="svg-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                  <path fill="none" d="M0 0h24v24H0z"></path>
+                  <path
+                    fill="currentColor"
+                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
+                </svg>
+              </div>
             </div>
-          </div>
-          <span>Send</span>
-        </button>
-      </div>
+            <span>Send</span>
+          </button>
+        </div>
     </section>
   </div>
 
@@ -316,16 +264,17 @@ session_start();
     });
 
     // var id_usuario = "";
-
+    var nombre_receptor = document.getElementById("nombre_amigo");
     document.querySelectorAll(".friends").forEach(element => {
+
       element.addEventListener("click", function() {
         var id_usuario = element.dataset.key;
+        nombre_receptor.setAttribute("data-receptor", id_usuario);
         fetch(`http://localhost/Chat/php/public/api/ChatController.php?id=${id_usuario}`)
           .then(res => res.json())
           .then(usuario => {
             // Cambiar nombre en la cabecera
             document.getElementById("nombre_amigo").textContent = usuario.nombre_usuario;
-
             // // Cambiar imagen de cabecera si tienes una ruta dinámica en la DB
             // if (usuario.foto_perfil) {
             //   document.querySelector("#header-img img").src = usuario.foto_perfil;
@@ -336,9 +285,6 @@ session_start();
           .catch(err => console.error("Error al obtener datos del usuario:", err));
       })
     });
-
-
-    
   </script>
 </body>
 
