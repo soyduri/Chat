@@ -126,9 +126,10 @@
           .then((data) => {
             if (data.success) {
               console.log(data);
-              alertify.set("notifier", "position", "bottom-right");
-              alertify.success("✅ Inicio de sesión exitoso, bienvenido <strong>" + usuario) + "<strong>";
-              window.location.href = "../html/principal.html";
+              //alertify.set("notifier", "position", "bottom-right");
+              //alertify.success("✅ Inicio de sesión exitoso, bienvenido <strong>" + usuario) + "<strong>";
+              // console.log('me voy');
+              document.location.href =('http://localhost/Chat/src/html/principal.php');
             } else {
               if (usuario == "" || contrasena == "") {
                 alertify.set("notifier", "position", "bottom-right");

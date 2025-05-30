@@ -6,7 +6,6 @@ class Usuarios
     //Registramos usuario en la tabla de usuarios
     public static function registrarUsuario($nombre_usuario, $password_plano)
     {
-
         $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
         $stmt->bindParam(":nombre_usuario", $nombre_usuario, PDO::PARAM_STR);
         $stmt->execute();
@@ -48,7 +47,7 @@ class Usuarios
         return $stmt->fetchAll($type_fetch);
     }
     //Función para actualizar el estado de en linea o no.
-    public static function UpdateEstado($nombre_usuario,$en_linea)
+    public static function UpdateEstado($nombre_usuario, $en_linea)
     {
 
         $stmt = BaseDatos::getConection()->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
@@ -57,8 +56,29 @@ class Usuarios
         //La función fetch nos devuelve toda la fila  que coincidan con el select que hemos hecho la consulta
         $row =  $stmt->fetch();
         $stmt = BaseDatos::getConection()->prepare(
-            "UPDATE estado_usuario SET (en_linea) VALUES ($en_linea) where id =" . $row[`id`] . ""
+            "UPDATE estado_usuario SET en_linea = ($en_linea) where usuario_id =" . $row['id'] . ""
         );
         return $stmt->execute() ? true : "Error al actualizar el usuario.";
+    }
+    //Función para obtener todos los usuarios.
+    public static function mostrarAllUsuarios($type_fetch = PDO::FETCH_OBJ)
+    {
+        $stmt = BaseDatos::getConection()->prepare("SELECT * from usuarios,estado_usuario where usuarios.id = estado_usuario.usuario_id  order by id asc");
+        $stmt->execute();
+        return $stmt->fetchAll($type_fetch);
+    }
+    public static function mostrarAllUsuariosConectados($type_fetch = PDO::FETCH_OBJ)
+    {   //Consulta para obtener los usuarios conectados.
+        $stmt = BaseDatos::getConection()->prepare("SELECT nombre_usuario FROM usuarios where id=(Select usuario_id from estado_usuario where en_linea=1);");
+        $stmt->execute();
+        return $stmt->fetchAll($type_fetch);
+    }
+
+    public static function getUsuarioById($id, $type_fetch = PDO::FETCH_OBJ)
+    {
+        $stmt = BaseDatos::getConection()->prepare("SELECT * FROM usuarios WHERE id = :id");
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll($type_fetch);
     }
 }
