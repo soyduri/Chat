@@ -18,13 +18,13 @@ if (!empty($_POST['nombre_usuario']) && !empty($_POST['contrasena_hash'])) {
         $_SESSION['id'] = $usuario['id'];
 
         Usuarios::UpdateEstado($nombre_usuario, 1);
-
         echo json_encode([
             "success" => true,
             "message" => "Login correcto",
             "nombre_usuario" => $_SESSION['nombre_usuario'],
             "id" => $_SESSION['id']
         ]);
+        
     } else {
         echo json_encode([
             "success" => false,

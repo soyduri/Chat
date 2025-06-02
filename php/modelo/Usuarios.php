@@ -91,4 +91,19 @@ class Usuarios
         $stmt->bindParam(":contenido", $contenido, PDO::PARAM_STR);
         return $stmt->execute() ? true : "Error al registrar el mensaje.";
     }
+
+    public static function getMensajesByEmisorReceptor($id_emisor, $id_receptor, $type_fetch = PDO::FETCH_OBJ)
+    {   //Hacemos la consulta de manera que obtenga tanto los mensajes que envia uno y recibe el otro y viceversa;
+        $sql = "SELECT * 
+            FROM mensajes 
+            WHERE (emisor_id = :id_emisor AND receptor_id = :id_receptor) 
+               OR (emisor_id = :id_receptor AND receptor_id = :id_emisor)
+            ORDER BY enviado_en ASC";
+
+        $stmt = BaseDatos::getConection()->prepare($sql);
+        $stmt->bindParam(":id_emisor", $id_emisor, PDO::PARAM_INT);
+        $stmt->bindParam(":id_receptor", $id_receptor, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll($type_fetch);
+    }
 }

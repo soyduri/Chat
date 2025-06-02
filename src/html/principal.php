@@ -5,287 +5,436 @@ require_once("../../php/modelo/Usuarios.php");
 session_start();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>DarksApp</title>
-  <link rel="stylesheet" href="../css/bootstrap.css" />
-  <link rel="stylesheet" href="../css/chat.css" />
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      let contenido_enviar = {};
-      //Realizamos la conexión cada vez que se carga esta página.
-      var conn = new WebSocket("ws://localhost:8080");
-      conn.onopen = function(e) {
-        console.log("¡Conexión establecida! ");
-      };
-      conn.onmessage = function(e) {
-        let respuesta = JSON.parse(e.data);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Minimalista Responsive</title>
+    <link rel="stylesheet" href="../css/chat.css" />
+    <style>
+        .loader {
+            width: 160px;
+            height: 185px;
+            position: relative;
+            background: #34C759;
+            border-radius: 100px 100px 0 0;
+            align-items: center;
+            left: 741px;
+            top: 656px;
 
-        const chatArea = document.getElementById("chat-area");
+        }
 
-        const chatDiv = document.createElement("div");
-        chatDiv.className = "friends-chat";
-        chatDiv.innerHTML = `
-                              <div class="profile friends-chat-photo">
-                                <img src="../images/ava2.jpg" alt="" />
-                              </div>
-                              <div class="friends-chat-content">
-                                  <p class="friends-chat-name">${respuesta.nombre}</p>
-                                  <p class="friends-chat-balloon">${respuesta.mensaje}</p>
-                                  <h5 class="chat-datetime">${new Date().toLocaleString()}</h5>
-                              </div>
-                            `;
+        .loader:after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 125px;
+            left: 50%;
+            top: 25px;
+            transform: translateX(-50%);
+            background-image: radial-gradient(circle, #000 48%, transparent 55%),
+                radial-gradient(circle, #000 48%, transparent 55%),
+                radial-gradient(circle, #fff 30%, transparent 45%),
+                radial-gradient(circle, #000 48%, transparent 51%),
+                linear-gradient(#000 20px, transparent 0),
+                linear-gradient(#cfecf9 60px, transparent 0),
+                radial-gradient(circle, #cfecf9 50%, transparent 51%),
+                radial-gradient(circle, #cfecf9 50%, transparent 51%);
+            background-repeat: no-repeat;
+            background-size: 16px 16px, 16px 16px, 10px 10px, 42px 42px, 12px 3px,
+                50px 25px, 70px 70px, 70px 70px;
+            background-position: 25px 10px, 55px 10px, 36px 44px, 50% 30px, 50% 85px,
+                50% 50px, 50% 22px, 50% 45px;
+            animation: faceLift 3s linear infinite alternate;
+        }
 
-        chatArea.appendChild(chatDiv);
-        chatArea.scrollTop = chatArea.scrollHeight;
-      };
+        .loader:before {
+            content: "";
+            position: absolute;
+            width: 140%;
+            height: 125px;
+            left: -20%;
+            top: 0;
+            background-image: radial-gradient(circle, #34C759 48%, transparent 50%),
+                radial-gradient(circle, #34C759 48%, transparent 50%);
+            background-repeat: no-repeat;
+            background-size: 65px 65px;
+            background-position: 0px 12px, 145px 12px;
+            animation: earLift 3s linear infinite alternate;
+        }
 
-      var receptor = document.getElementById("nombre_amigo");
-      var emisor = document.getElementById("emisor")
-      let btn_enviar = document.getElementById("btn_enviar_mensaje");
-      btn_enviar.addEventListener("click", function() {
-        // Evitamos la recarga de la página (si usas un formulario real)
-        // e.preventDefault();
-
-        var id_receptor = receptor.dataset.receptor;
-        console.log(id_receptor)
-        var id_emisor = emisor.dataset.emisor;
-        console.log(id_emisor)
-        var nombre_amigo = document.getElementById("nombre_amigo").textContent;
-
-        var contenido_mensaje = document.getElementById("type-area");
-        var mensaje = contenido_mensaje.value;
-
-        var enviar_datos = {
-          "receptor_id": id_receptor,
-          "emisor_id": id_emisor,
-          "contenido": mensaje,
-        };
-        console.log(enviar_datos);
-
-        // Enviamos al backend con fetch
-        fetch("http://localhost/Chat/php/public/api/ChatController.php", {
-            method: "POST",
-            body: JSON.stringify(enviar_datos)
-          })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success) {
-              console.log("Mensaje guardado:", data);
-            } else {
-              console.error("Error en backend:", data);
+        @keyframes faceLift {
+            0% {
+                transform: translateX(-60%);
             }
-          })
-          .catch((err) => {
-            console.error("Error en fetch:", err);
-          });
 
-        // // Enviamos por WebSocket también (si aplica)
-        // if (typeof conn !== "undefined" && conn.readyState === WebSocket.OPEN) {
-        //   conn.send(JSON.stringify(enviar_datos)); // Usamos el mismo objeto
-        // }
+            100% {
+                transform: translateX(-30%);
+            }
+        }
 
-        contenido_mensaje.value = "";
-      });
+        @keyframes earLift {
+            0% {
+                transform: translateX(10px);
+            }
 
-    });
-  </script>
+            100% {
+                transform: translateX(0px);
+            }
+        }
+
+        /* From Uiverse.io by vinodjangid07 */
+        .Btn {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition-duration: .3s;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+            background-color: rgb(255, 65, 65);
+        }
+
+        /* plus sign */
+        .sign {
+            width: 100%;
+            transition-duration: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sign svg {
+            width: 17px;
+        }
+
+        .sign svg path {
+            fill: white;
+        }
+
+
+        /* button click effect*/
+        .Btn:active {
+            transform: translate(2px, 2px);
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let contenido_enviar = {};
+
+            var conn = new WebSocket("ws://localhost:8080");
+            conn.onopen = function(e) {
+                console.log("¡Conexión establecida! ");
+            };
+            conn.onmessage = function(e) {
+                const mensaje = JSON.parse(e.data);
+                const chatArea = document.querySelector(".chat-messages");
+                const id_emisor_actual = document.getElementById("emisor").dataset.emisor;
+
+                if (mensaje.emisor_id == id_emisor_actual) {
+                    return;
+                }
+
+                const hora_mensaje = new Date().toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const chatDiv = document.createElement("div");
+                chatDiv.className = "message-container received";
+                chatDiv.innerHTML = `
+                                        <div class="message">${mensaje.contenido}</div>
+                                        <div class="message-time">${hora_mensaje}</div>
+                                     `;
+                chatArea.appendChild(chatDiv);
+                chatArea.scrollTop = chatArea.scrollHeight;
+            };
+
+
+            var receptor = document.getElementById("nombre_amigo");
+            var emisor = document.getElementById("emisor")
+            let btn_enviar = document.getElementById("btn_enviar_mensaje");
+            btn_enviar.addEventListener("click", function() {
+                var id_receptor = receptor.dataset.receptor;
+                var id_emisor = emisor.dataset.emisor;
+                var mensaje = document.getElementById("type-area").value;
+                //Evitamos que envie mensajes vacios.
+                if (!mensaje.trim()) return;
+                //Convertimos la hora del mensaje
+                const hora_mensaje = new Date().toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const chatArea = document.querySelector(".chat-messages");
+                const chatDiv = document.createElement("div");
+                chatDiv.className = "message-container sent";
+                chatDiv.innerHTML = `
+                                    <div class="message">${mensaje}</div>
+                                    <div class="message-time">${hora_mensaje}</div>
+                                    `;
+                chatArea.appendChild(chatDiv);
+                chatArea.scrollTop = chatArea.scrollHeight;
+
+                // Limpiamos el input.
+                document.getElementById("type-area").value = "";
+
+                const formData = new FormData();
+                formData.append("receptor_id", id_receptor);
+                formData.append("emisor_id", id_emisor);
+                formData.append("contenido", mensaje);
+
+                fetch("http://localhost/Chat/php/public/api/ChatController.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error("Error al guardar mensaje:", data);
+                        }
+                    })
+                    .catch(err => console.error("Error en fetch:", err));
+
+                // Enviar por WebSocket
+                if (conn && conn.readyState === WebSocket.OPEN) {
+                    conn.send(JSON.stringify({
+                        contenido: mensaje,
+                        emisor_id: id_emisor,
+                        receptor_id: id_receptor
+                    }));
+                }
+
+            });
+
+        });
+    </script>
 </head>
 
 <body>
-  <div id="app" class="app">
-    <!-- LEFT SECTION -->
-
-    <section id="main-left" class="main-left">
-      <!-- header -->
-      <div id="header-left" class="header-left">
-        <!-- <span class="glyphicon glyphicon-menu-hamburger hamburger-btn"></span> -->
-        <div class="input-wrapper">
-          <button class="icon">
-            <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z"
-                stroke="#fff"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-              <path d="M22 22L20 20" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </button>
-          <input type="text" name="text" class="input" placeholder="search.." />
-        </div>
-        <!-- self-profile -->
-        <div id="self-info" class="self-info">
-          <!-- photo -->
-          <div class="profile your-photo">
-            <img src="../images/ava4.jpg" alt="" />
-          </div>
-          <!-- name -->
-          <h4 class="name your-name" name="emisor_id" id="emisor" data-emisor="<?php echo isset($_SESSION['id']) ? $_SESSION['id'] : ''; ?>">
-            <?php echo isset($_SESSION["nombre_usuario"]) ? $_SESSION["nombre_usuario"] : "No hay usuario logado"; ?>
-          </h4>
+    <!-- Sidebar -->
+    <aside class="users-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4 class="name your-name" name="emisor_id" id="emisor" data-emisor="<?php echo isset($_SESSION['id']) ? $_SESSION['id'] : ''; ?>">
+                <?php echo isset($_SESSION["nombre_usuario"]) ? $_SESSION["nombre_usuario"] : "No hay usuario logado"; ?>
+            </h4>
+            <button class="Btn" id="btn_cerrar_sesion" name="cerrar_sesion">
+                <div class="sign"><svg viewBox="0 0 512 512">
+                        <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
+                    </svg></div>
+            </button>
 
 
 
-          <!-- setting btn -->
-          <span class="glyphicon glyphicon-cog"></span>
-          <!--btn logout -->
-          <button class="btn-logout">
-            <div class="sign">
-              <svg viewBox="0 0 512 512">
-                <path
-                  d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path>
-              </svg>
-            </div>
-            <div class="text">Logout</div>
-          </button>
-        </div>
-      </div>
-
-      <!-- chat list -->
-      <div id="chat-list" class="chat-list">
-        <!-- Lista de usuarios -->
-        <?php
-        foreach (Usuarios::mostrarAllUsuarios() as $usuario) {
-        ?>
-          <?php if ($_SESSION["nombre_usuario"] != $usuario->nombre_usuario) { ?>
-            <div id="friends" <?php if ($usuario->en_linea == 0) { ?> style="background-color: red;" <?php } ?> class="friends" data-key="<?php echo $usuario->id ?>">
-              <!-- photo -->
-              <div class="profile friends-photo">
-                <img src="../images/ava2.jpg" alt="" />
-              </div>
-
-              <div class="friends-credent">
-                <!-- name -->
-                <span hidden id="id_usuario"><?php echo  $usuario->id ?></span>
-                <span class="friends-name"><?php echo  $usuario->nombre_usuario ?></span>
-                <!-- last message -->
-                <span class="friends-message"><!--Mensaje que se ve en el menu?--></span>
-              </div>
-              <!-- notification badge -->
-              <span class="badge notif-badge"> <!-- Numero de notificaciones--></span>
-            </div>
-          <?php } ?>
-        <?php } ?>
-
-
-      </div>
-    </section>
-
-    <!-- RIGHT SECTION -->
-
-    <section id="main-right" class="main-right">
-      <!-- header -->
-      <div id="header-right" class="header-right">
-        <!-- profile pict -->
-        <div id="header-img" class="profile header-img">
-          <img src="../images/ava2.jpg" alt="" />
-        </div>
-
-        <!-- name -->
-        <h4 class="name friend-name" id="nombre_amigo" data-receptor="" name="receptor_id"> <!--Aqui va el nombre cuando pinchas --></h4>
-        <!-- some btn -->
-        <div class="some-btn">
-          <span class="glyphicon glyphicon-facetime-video"></span>
-          <span class="glyphicon glyphicon-earphone"></span>
-          <span class="glyphicon glyphicon-option-vertical option-btn" id="option-btn">
-            <div class="dropdown text-end">
-              <ul class="dropdown-menu custom-dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item custom-dropdown-item" href="#">Bloquear usuario</a></li>
-                <li><a class="dropdown-item custom-dropdown-item" href="#">Vaciar chat</a></li>
-              </ul>
-            </div>
-          </span>
-        </div>
-      </div>
-
-      <!-- chat area -->
-      <div id="chat-area" class="chat-area">
-        <!-- chat content -->
-        <!-- typing area -->
-        <div id="typing-area" class="typing-area">
-          <!-- input form -->
-          <input id="type-area" class="type-area" placeholder="Type something..." type="text" name="contenido" />
-          <!-- attachment btn -->
-          <div class="attach-btn">
-            <!-- Vista previa de la cámara en escritorio -->
-            <video id="videoPreview" width="320" height="240" autoplay style="display: none; margin-top: 10px"></video>
-            <span class="glyphicon glyphicon-paperclip file-btn icon-hover-scale" id="spanFile">
-              <input type="file" style="display: none" id="inputFile" />
-            </span>
-            <span class="glyphicon glyphicon-camera icon-hover-scale" id="spanCam">
-              <input type="file" accept="image/*" capture="environment" style="display: none" id="inputCam" />
-            </span>
-            <span class="glyphicon glyphicon-picture icon-hover-scale" id="spanImg">
-              <input type="file" style="display: none" id="inputImg" />
-            </span>
-          </div>
-          <!-- send btn -->
-          <button type="button" class="btn-enviar" id="btn_enviar_mensaje">
-            <div class="svg-wrapper-1">
-              <div class="svg-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                  <path fill="none" d="M0 0h24v24H0z"></path>
-                  <path
-                    fill="currentColor"
-                    d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
+            <button class="menu-button" id="closeSidebar">
+                <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                 </svg>
-              </div>
-            </div>
-            <span>Send</span>
-          </button>
+            </button>
         </div>
-    </section>
-  </div>
+        <div class="user-search">
+            <input type="text" placeholder="Buscar" name="buscador_usuarios" id="buscador_usuarios">
+        </div>
+        <div class="user-list" id="user-list">
+            <!-- Cajas de los usuarios -->
+            <?php
+            foreach (Usuarios::mostrarAllUsuarios() as $usuario) {
+            ?>
+                <?php if ($_SESSION["nombre_usuario"] != $usuario->nombre_usuario) { ?>
+                    <div class="user-item active" data-key="<?php echo $usuario->id ?>" data-nombre="<?php echo $usuario->nombre_usuario ?>">
+                        <span hidden id="id_usuario"><?php echo  $usuario->id ?></span>
+                        <div class="user-avatar" <?php if ($usuario->en_linea == 0) { ?> style="background-color: red;" <?php } ?>></div>
+                        <div class="user-info">
+                            <div class="user-name"><?php echo  $usuario->nombre_usuario ?></div>
+                            <div class="user-status">
+                                <?= ($usuario->en_linea == 0) ? 'Desconectado' : 'En Línea' ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+        </div>
+    </aside>
 
-  <!-- jQuey, Popper, BootstrapJS -->
-  <script src="../javascript/jquery-3.3.1.min.js"></script>
-  <script src="../javascript/bootstrap.min.js"></script>
-  <script src="../javascript/bootstrap.min.js"></script>
-  <script src="../javascript/botonesEnviar.js"></script>
-  <script>
-    const optionBtn = document.querySelector("#option-btn");
-    const dropdownMenu = optionBtn.querySelector("ul");
+    <!-- Overlay para moviles -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    optionBtn.addEventListener("click", function(e) {
-      e.stopPropagation(); // evita que el clic se propague al documento
-      dropdownMenu.style.display = "block";
-    });
+    <!--chat -->
+    <main class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <button class="back-button" id="backButton">
+                <svg class="back-icon" viewBox="0 0 24 24">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+                </svg>
+            </button>
+            <div class="chat-title" id="nombre_amigo" data-receptor="" name="receptor_id">No hay chat seleccionado.</div>
+            <button class="menu-button" id="openSidebar">
+                <svg class="menu-icon" viewBox="0 0 24 24">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                </svg>
+            </button>
+        </div>
 
-    document.addEventListener("click", function(e) {
-      // Si el clic NO es dentro del botón o el menú, ocultamos el menú
-      if (!optionBtn.contains(e.target)) {
-        dropdownMenu.style.display = "none";
-      }
-    });
+        <div class="chat-messages">
 
-    // var id_usuario = "";
-    var nombre_receptor = document.getElementById("nombre_amigo");
-    document.querySelectorAll(".friends").forEach(element => {
+            <div class="loader"></div>
+        </div>
 
-      element.addEventListener("click", function() {
-        var id_usuario = element.dataset.key;
-        nombre_receptor.setAttribute("data-receptor", id_usuario);
-        fetch(`http://localhost/Chat/php/public/api/ChatController.php?id=${id_usuario}`)
-          .then(res => res.json())
-          .then(usuario => {
-            // Cambiar nombre en la cabecera
-            document.getElementById("nombre_amigo").textContent = usuario.nombre_usuario;
-            // // Cambiar imagen de cabecera si tienes una ruta dinámica en la DB
-            // if (usuario.foto_perfil) {
-            //   document.querySelector("#header-img img").src = usuario.foto_perfil;
-            // }
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" placeholder="Escribe aquí..." name="contenido" id="type-area">
+                <button class="send-button" type="button" id="btn_enviar_mensaje">
+                    <svg class="send-icon" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </main>
 
-            window.usuarioSeleccionadoId = usuario.id;
-          })
-          .catch(err => console.error("Error al obtener datos del usuario:", err));
-      })
-    });
-  </script>
+    <script>
+        // Funcionalidad para responsive
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const openSidebarBtn = document.getElementById('openSidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+        const backButton = document.getElementById('backButton');
+        const chatContainer = document.getElementById('chatContainer');
+
+        // Abrir sidebar en moviles
+        openSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+        });
+
+        // Cerrar sidebar
+        const closeSidebar = () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        };
+
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Boton de volver (para moviles)
+        backButton.addEventListener('click', () => {
+            // Pondremos la funcionalidad de cerrar sesion
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
+        //Funcion para cargar los mensajes cuando el usuario seleccione una conversacion.
+        function cargarMensajes(idEmisor, idReceptor) {
+            fetch(`http://localhost/Chat/php/public/api/MensajesController.php?id_emisor=${idEmisor}&id_receptor=${idReceptor}`)
+                .then(res => res.json())
+                .then(mensajes => {
+                    const chatArea = document.querySelector(".chat-messages");
+                    const chatDiv = document.createElement("div");
+
+                    if (mensajes.length == 0) {
+                        chatArea.innerHTML = ""; // Limpiamos el contenedor
+                        chatDiv.innerHTML = `
+                                            <div class="loader"></div>
+                                            `;
+                        chatArea.appendChild(chatDiv);
+                        return;
+                    }
+                    chatArea.innerHTML = ""; // Limpiamos el contenedor
+                    mensajes.forEach(mensaje => {
+                        const esEnviado = mensaje.emisor_id == idEmisor;
+
+                        const chatDiv = document.createElement("div");
+                        chatDiv.className = `message-container ${esEnviado ? 'sent' : 'received'}`;
+                        const hora_mensaje = new Date(mensaje.enviado_en).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        chatDiv.innerHTML = `
+                    <div class="message">${mensaje.contenido}</div>
+                    <div class="message-time">${hora_mensaje}</div>
+                `;
+
+                        chatArea.appendChild(chatDiv);
+                    });
+
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                })
+                .catch(err => console.error("Error al cargar mensajes:", err));
+        }
+
+        var emisor = document.getElementById("emisor")
+        var nombre_receptor = document.getElementById("nombre_amigo");
+        document.querySelectorAll(".user-item").forEach(element => {
+            element.addEventListener("click", function() {
+                var id_usuario = element.dataset.key;
+                var id_emisor = emisor.dataset.emisor;
+                // console.log(id_usuario);
+                cargarMensajes(id_emisor, id_usuario);
+                nombre_receptor.setAttribute("data-receptor", id_usuario);
+                fetch(`http://localhost/Chat/php/public/api/ChatController.php?id=${id_usuario}`)
+                    .then(res => res.json())
+                    .then(usuario => {
+
+                        document.getElementById("nombre_amigo").textContent = usuario.nombre_usuario;
+                        window.usuarioSeleccionadoId = usuario.id;
+                    })
+                    .catch(err => console.error("Error al obtener datos del usuario:", err));
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            })
+        });
+        //Evento para cerrar 
+        var btn_cerrar_sesion = document.getElementById("btn_cerrar_sesion");
+        btn_cerrar_sesion.addEventListener("click", function() {
+            console.log("Hola");
+            const formData = new FormData();
+            formData.append("cerrar_sesion", 1);
+            fetch("http://localhost/Chat/php/public/api/ChatController.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        //Redirigimos al usuario a la pagina de login
+                        document.location.href = ('http://localhost/Chat/src/html/login_registro.html');
+                    }
+                })
+                .catch(err => console.error("Error en fetch:", err));
+        })
+        //Evento para el buscador 
+        document.getElementById("buscador_usuarios").addEventListener("input", function() {
+            var valor_buscador = document.getElementById("buscador_usuarios").value;
+            if (valor_buscador) {
+                document.querySelectorAll(".user-item").forEach(usuario => {
+                    var nombre_usuario = usuario.dataset.nombre;
+                    if (!nombre_usuario.includes(valor_buscador)) {
+                        usuario.style.display = "none";
+                    } else {
+                        usuario.style.display = "block";
+                    }
+                });
+            } else if (!valor_buscador) {
+                document.querySelectorAll(".user-item").forEach(usuario => {
+                    usuario.style.display = "block";
+                });
+            }
+
+            
+        })
+    </script>
 </body>
 
 </html>
