@@ -22,7 +22,8 @@ if (!empty($_POST['nombre_usuario']) && !empty($_POST['contrasena_hash'])) {
             "success" => true,
             "message" => "Login correcto",
             "nombre_usuario" => $_SESSION['nombre_usuario'],
-            "id" => $_SESSION['id']
+            "id" => $_SESSION['id'],
+            "status" => 1
         ]);
         
     } else {

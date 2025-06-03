@@ -37,10 +37,10 @@ if (isset($_GET['id'])) {
 
 if (isset($_POST['cerrar_sesion'])) {
     Usuarios::UpdateEstado($nombre_usuario, 0);
-    $_SESSION['nombre_usuario'] = "";
-    $_SESSION['id'] = "";
     echo json_encode([
         "success" => true,
         "message" => "Sesion cerrada con exito",
+        "id" => $_SESSION['id'],
+        "status" => 0
     ]);
 }

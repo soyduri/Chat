@@ -1,6 +1,6 @@
 :root {
   --primary-green: #34C759;
-  --secondary-green: #E6F4EA;
+  --secondary-green: #F2F2F7;
   --white: #FFFFFF;
   --light-gray: #F2F2F7;
   --medium-gray: #E5E5EA;
@@ -96,6 +96,7 @@ body {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s;
+  background-color: var(--white);
 }
 
 .user-item:hover {
@@ -103,7 +104,7 @@ body {
 }
 
 .user-item.active {
-  background-color: var(--secondary-green);
+  background-color: var(--light-gray);
 }
 
 .user-avatar {
@@ -188,7 +189,7 @@ body {
 
 .chat-messages {
   flex: 1;
-  padding: 16px 12px;
+  padding: 4px 12px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;

@@ -84,7 +84,7 @@ session_start();
             }
         }
 
-        /* From Uiverse.io by vinodjangid07 */
+
         .Btn {
             display: flex;
             align-items: center;
@@ -126,52 +126,72 @@ session_start();
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            let contenido_enviar = {};
+            const id_emisor_actual = document.getElementById("emisor").dataset.emisor;
+            var conn = new WebSocket("ws://localhost:8080?id=" + id_emisor_actual);
+            var emisor = document.getElementById("emisor")
+            var id_emisor = emisor.dataset.emisor;
+            var receptor = document.getElementById("nombre_amigo");
+            let btn_enviar = document.getElementById("btn_enviar_mensaje");
 
-            var conn = new WebSocket("ws://localhost:8080");
+
+
             conn.onopen = function(e) {
-                console.log("¡Conexión establecida! ");
+                console.log("Conexion establecida" + id_emisor_actual);
+                //Aqui enviamos a el servidor los siguientes datos.
+                conn.send(JSON.stringify({
+                    type: "login",
+                    userid: id_emisor_actual
+                }));
             };
+
             conn.onmessage = function(e) {
-                const mensaje = JSON.parse(e.data);
+                var mensaje = JSON.parse(e.data);
                 const chatArea = document.querySelector(".chat-messages");
-                const id_emisor_actual = document.getElementById("emisor").dataset.emisor;
+                var avatar = document.getElementById("avatar_" + mensaje.userid);
+                var status = document.getElementById("user_status_" + mensaje.userid);
+                switch (mensaje.type) {
+                    case "login":
+                        avatar.style.backgroundColor = "green";
+                        status.textContent = "En Línea";
+                        break;
+                    case "message":
+                        if (mensaje.emisor_id == id_emisor_actual) {
+                            return;
+                        }
 
-                if (mensaje.emisor_id == id_emisor_actual) {
-                    return;
-                }
+                        const hora_mensaje = new Date().toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
 
-                const hora_mensaje = new Date().toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-
-                const chatDiv = document.createElement("div");
-                chatDiv.className = "message-container received";
-                chatDiv.innerHTML = `
+                        const chatDiv = document.createElement("div");
+                        chatDiv.className = "message-container received";
+                        chatDiv.innerHTML = `
                                         <div class="message">${mensaje.contenido}</div>
                                         <div class="message-time">${hora_mensaje}</div>
                                      `;
-                chatArea.appendChild(chatDiv);
-                chatArea.scrollTop = chatArea.scrollHeight;
+                        chatArea.appendChild(chatDiv);
+                        // chatArea.scrollTop = chatArea.scrollHeight;
+                        break;
+                    case "logout":
+                        avatar.style.backgroundColor = "red";
+                        status.textContent = "Desconectado";
+                        break;
+                }
             };
 
 
-            var receptor = document.getElementById("nombre_amigo");
-            var emisor = document.getElementById("emisor")
-            let btn_enviar = document.getElementById("btn_enviar_mensaje");
+
             btn_enviar.addEventListener("click", function() {
                 var id_receptor = receptor.dataset.receptor;
-                var id_emisor = emisor.dataset.emisor;
                 var mensaje = document.getElementById("type-area").value;
                 //Evitamos que envie mensajes vacios.
-                if (!mensaje.trim()) return;
+                if (!mensaje.trim() || receptor.textContent == "No hay chat seleccionado.") return;
                 //Convertimos la hora del mensaje
                 const hora_mensaje = new Date().toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-
                 const chatArea = document.querySelector(".chat-messages");
                 const chatDiv = document.createElement("div");
                 chatDiv.className = "message-container sent";
@@ -180,7 +200,7 @@ session_start();
                                     <div class="message-time">${hora_mensaje}</div>
                                     `;
                 chatArea.appendChild(chatDiv);
-                chatArea.scrollTop = chatArea.scrollHeight;
+                // chatArea.scrollTop = chatArea.scrollHeight;
 
                 // Limpiamos el input.
                 document.getElementById("type-area").value = "";
@@ -205,14 +225,42 @@ session_start();
                 // Enviar por WebSocket
                 if (conn && conn.readyState === WebSocket.OPEN) {
                     conn.send(JSON.stringify({
+                        type: "message",
                         contenido: mensaje,
                         emisor_id: id_emisor,
-                        receptor_id: id_receptor
+                        receptor_id: id_receptor,
                     }));
                 }
-
             });
 
+            conn.onclose = function(e) {
+                console.log("Usuario desconectado");
+                conn.send(JSON.stringify({
+                    type: "logout",
+                    userid: id_emisor_actual
+                }));
+            };
+
+            //Evento para cerrar 
+            var btn_cerrar_sesion = document.getElementById("btn_cerrar_sesion");
+            btn_cerrar_sesion.addEventListener("click", function() {
+                conn.onclose();
+                // console.log("Hola");
+                const formData = new FormData();
+                formData.append("cerrar_sesion", 1);
+                fetch("http://localhost/Chat/php/public/api/ChatController.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            //Redirigimos al usuario a la pagina de login
+                            document.location.href = ('http://localhost/Chat/src/html/login_registro.html');
+                        }
+                    })
+                    .catch(err => console.error("Error en fetch:", err));
+            })
         });
     </script>
 </head>
@@ -247,12 +295,15 @@ session_start();
             foreach (Usuarios::mostrarAllUsuarios() as $usuario) {
             ?>
                 <?php if ($_SESSION["nombre_usuario"] != $usuario->nombre_usuario) { ?>
-                    <div class="user-item active" data-key="<?php echo $usuario->id ?>" data-nombre="<?php echo $usuario->nombre_usuario ?>">
+                    <div class="user-item" data-key="<?php echo $usuario->id ?>" data-nombre="<?php echo $usuario->nombre_usuario ?>">
                         <span hidden id="id_usuario"><?php echo  $usuario->id ?></span>
-                        <div class="user-avatar" <?php if ($usuario->en_linea == 0) { ?> style="background-color: red;" <?php } ?>></div>
+                        <div class="user-avatar"
+                            id="avatar_<?php echo $usuario->id ?>"
+                            style="background-color: <?php echo ($usuario->en_linea == 0) ? 'red' : 'green'; ?>;">
+                        </div>
                         <div class="user-info">
                             <div class="user-name"><?php echo  $usuario->nombre_usuario ?></div>
-                            <div class="user-status">
+                            <div class="user-status" id="user_status_<?php echo $usuario->id ?>">
                                 <?= ($usuario->en_linea == 0) ? 'Desconectado' : 'En Línea' ?>
                             </div>
                         </div>
@@ -368,7 +419,7 @@ session_start();
                         chatArea.appendChild(chatDiv);
                     });
 
-                    chatArea.scrollTop = chatArea.scrollHeight;
+                    // chatArea.scrollTop = chatArea.scrollHeight;
                 })
                 .catch(err => console.error("Error al cargar mensajes:", err));
         }
@@ -377,6 +428,11 @@ session_start();
         var nombre_receptor = document.getElementById("nombre_amigo");
         document.querySelectorAll(".user-item").forEach(element => {
             element.addEventListener("click", function() {
+                document.querySelectorAll(".user-item").forEach(elemento => {
+                    elemento.classList.remove("active");
+                });
+
+                element.classList.add("active");
                 var id_usuario = element.dataset.key;
                 var id_emisor = emisor.dataset.emisor;
                 // console.log(id_usuario);
@@ -385,7 +441,6 @@ session_start();
                 fetch(`http://localhost/Chat/php/public/api/ChatController.php?id=${id_usuario}`)
                     .then(res => res.json())
                     .then(usuario => {
-
                         document.getElementById("nombre_amigo").textContent = usuario.nombre_usuario;
                         window.usuarioSeleccionadoId = usuario.id;
                     })
@@ -395,25 +450,7 @@ session_start();
                 }
             })
         });
-        //Evento para cerrar 
-        var btn_cerrar_sesion = document.getElementById("btn_cerrar_sesion");
-        btn_cerrar_sesion.addEventListener("click", function() {
-            console.log("Hola");
-            const formData = new FormData();
-            formData.append("cerrar_sesion", 1);
-            fetch("http://localhost/Chat/php/public/api/ChatController.php", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        //Redirigimos al usuario a la pagina de login
-                        document.location.href = ('http://localhost/Chat/src/html/login_registro.html');
-                    }
-                })
-                .catch(err => console.error("Error en fetch:", err));
-        })
+
         //Evento para el buscador 
         document.getElementById("buscador_usuarios").addEventListener("input", function() {
             var valor_buscador = document.getElementById("buscador_usuarios").value;
@@ -432,7 +469,7 @@ session_start();
                 });
             }
 
-            
+
         })
     </script>
 </body>
