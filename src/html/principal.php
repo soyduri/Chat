@@ -84,6 +84,14 @@ session_start();
             }
         }
 
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            font-size: 18px;
+            color: #555;
+        }
 
         .Btn {
             display: flex;
@@ -122,6 +130,80 @@ session_start();
         /* button click effect*/
         .Btn:active {
             transform: translate(2px, 2px);
+        }
+
+        #cameraModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #cameraContainer {
+            background-color: #d4edda;
+            /* verde suave */
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #cameraContainer video,
+        #cameraContainer img {
+            max-width: 100%;
+            max-height: 60vh;
+            border-radius: 4px;
+        }
+
+        .camera-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-send {
+            background-color: #28a745;
+            /* verde */
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+        }
+
+        .btn-retry {
+            background-color: #ffc107;
+            /* amarillo */
+            color: black;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+        }
+
+        .btn-close {
+            background-color: #dc3545;
+            /* rojo */
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+        }
+
+        .btn-capture {
+            padding: 8px 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
         }
     </style>
     <script>
@@ -337,9 +419,20 @@ session_start();
             <div class="loader"></div>
         </div>
 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
         <div class="chat-input-container">
             <div class="chat-input-wrapper">
                 <input type="text" class="chat-input" placeholder="Escribe aquí..." name="contenido" id="type-area">
+                <button type="button" class="icon-button" id="spanCam" title="Abrir cámara">
+                    <span class="glyphicon glyphicon-camera"></span>
+                </button>
+                <button type="button" class="icon-button" id="spanFile" title="Adjuntar archivo">
+                    <span class="glyphicon glyphicon-paperclip"></span>
+                </button>
+                <!-- Input de archivo oculto-->
+                <input type="file" id="inputFile" style="visibility: hidden; position: absolute; width: 0; height: 0;">
+                <!-- Botón enviar -->
                 <button class="send-button" type="button" id="btn_enviar_mensaje">
                     <svg class="send-icon" viewBox="0 0 24 24">
                         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
@@ -347,6 +440,8 @@ session_start();
                 </button>
             </div>
         </div>
+
+
     </main>
 
     <script>
@@ -472,6 +567,8 @@ session_start();
 
         })
     </script>
+    <script src="../javascript/botonesEnviar.js"></script>
+
 </body>
 
 </html>
