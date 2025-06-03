@@ -217,53 +217,6 @@ session_start();
 
 
 
-            conn.onopen = function(e) {
-                console.log("Conexion establecida" + id_emisor_actual);
-                //Aqui enviamos a el servidor los siguientes datos.
-                conn.send(JSON.stringify({
-                    type: "login",
-                    userid: id_emisor_actual
-                }));
-            };
-
-            conn.onmessage = function(e) {
-                var mensaje = JSON.parse(e.data);
-                const chatArea = document.querySelector(".chat-messages");
-                var avatar = document.getElementById("avatar_" + mensaje.userid);
-                var status = document.getElementById("user_status_" + mensaje.userid);
-                switch (mensaje.type) {
-                    case "login":
-                        avatar.style.backgroundColor = "green";
-                        status.textContent = "En Línea";
-                        break;
-                    case "message":
-                        if (mensaje.emisor_id == id_emisor_actual) {
-                            return;
-                        }
-
-                        const hora_mensaje = new Date().toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-
-                        const chatDiv = document.createElement("div");
-                        chatDiv.className = "message-container received";
-                        chatDiv.innerHTML = `
-                                        <div class="message">${mensaje.contenido}</div>
-                                        <div class="message-time">${hora_mensaje}</div>
-                                     `;
-                        chatArea.appendChild(chatDiv);
-                        // chatArea.scrollTop = chatArea.scrollHeight;
-                        break;
-                    case "logout":
-                        avatar.style.backgroundColor = "red";
-                        status.textContent = "Desconectado";
-                        break;
-                }
-            };
-
-
-
             btn_enviar.addEventListener("click", function() {
                 var id_receptor = receptor.dataset.receptor;
                 var mensaje = document.getElementById("type-area").value;
@@ -282,7 +235,7 @@ session_start();
                                     <div class="message-time">${hora_mensaje}</div>
                                     `;
                 chatArea.appendChild(chatDiv);
-                // chatArea.scrollTop = chatArea.scrollHeight;
+                chatArea.scrollTop = chatArea.scrollHeight;
 
                 // Limpiamos el input.
                 document.getElementById("type-area").value = "";
@@ -308,12 +261,60 @@ session_start();
                 if (conn && conn.readyState === WebSocket.OPEN) {
                     conn.send(JSON.stringify({
                         type: "message",
-                        contenido: mensaje,
+                        message: mensaje,
                         emisor_id: id_emisor,
                         receptor_id: id_receptor,
                     }));
                 }
             });
+
+
+
+            conn.onopen = function(e) {
+                console.log("Conexion establecida" + id_emisor_actual);
+                //Aqui enviamos a el servidor los siguientes datos.
+                conn.send(JSON.stringify({
+                    type: "login",
+                    userid: id_emisor_actual
+                }));
+            };
+
+            conn.onmessage = function(e) {
+                var mensaje = JSON.parse(e.data);
+                const chatArea = document.querySelector(".chat-messages");
+                var avatar = document.getElementById("avatar_" + mensaje.userid);
+                var status = document.getElementById("user_status_" + mensaje.userid);
+                switch (mensaje.type) {
+                    case "login":
+                        avatar.style.backgroundColor = "green";
+                        status.textContent = "En Línea";
+                        break;
+                    case "message":
+                        console.log("Entra");
+                        if (mensaje.userid == id_emisor_actual) {
+                            return;
+                        }
+                        const hora_mensaje = new Date().toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        const chatDiv = document.createElement("div");
+                        chatDiv.className = "message-container received";
+                        chatDiv.innerHTML = `
+                                        <div class="message">${mensaje.message}</div>
+                                        <div class="message-time">${hora_mensaje}</div>
+                                     `;
+                        chatArea.appendChild(chatDiv);
+                        // chatArea.scrollTop = chatArea.scrollHeight;
+                        break;
+                    case "logout":
+                        avatar.style.backgroundColor = "red";
+                        status.textContent = "Desconectado";
+                        break;
+                }
+            };
+
 
             conn.onclose = function(e) {
                 console.log("Usuario desconectado");

@@ -46,7 +46,8 @@ class Chat implements MessageComponentInterface
             $payload = [
                 'type' => 'message',
                 'userid' => $this->userids[$from->resourceId] ?? 'Anónimo',
-                'message' => $data['message'],
+                'message' => $data['message'],  
+
             ];
         }
 
