@@ -10,80 +10,9 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Minimalista Responsive</title>
+    <title>Chat</title>
     <link rel="stylesheet" href="../css/chat.css" />
     <style>
-        .loader {
-            width: 160px;
-            height: 185px;
-            position: relative;
-            background: #34C759;
-            border-radius: 100px 100px 0 0;
-            align-items: center;
-            left: 741px;
-            top: 656px;
-
-        }
-
-        .loader:after {
-            content: "";
-            position: absolute;
-            width: 100px;
-            height: 125px;
-            left: 50%;
-            top: 25px;
-            transform: translateX(-50%);
-            background-image: radial-gradient(circle, #000 48%, transparent 55%),
-                radial-gradient(circle, #000 48%, transparent 55%),
-                radial-gradient(circle, #fff 30%, transparent 45%),
-                radial-gradient(circle, #000 48%, transparent 51%),
-                linear-gradient(#000 20px, transparent 0),
-                linear-gradient(#cfecf9 60px, transparent 0),
-                radial-gradient(circle, #cfecf9 50%, transparent 51%),
-                radial-gradient(circle, #cfecf9 50%, transparent 51%);
-            background-repeat: no-repeat;
-            background-size: 16px 16px, 16px 16px, 10px 10px, 42px 42px, 12px 3px,
-                50px 25px, 70px 70px, 70px 70px;
-            background-position: 25px 10px, 55px 10px, 36px 44px, 50% 30px, 50% 85px,
-                50% 50px, 50% 22px, 50% 45px;
-            animation: faceLift 3s linear infinite alternate;
-        }
-
-        .loader:before {
-            content: "";
-            position: absolute;
-            width: 140%;
-            height: 125px;
-            left: -20%;
-            top: 0;
-            background-image: radial-gradient(circle, #34C759 48%, transparent 50%),
-                radial-gradient(circle, #34C759 48%, transparent 50%);
-            background-repeat: no-repeat;
-            background-size: 65px 65px;
-            background-position: 0px 12px, 145px 12px;
-            animation: earLift 3s linear infinite alternate;
-        }
-
-        @keyframes faceLift {
-            0% {
-                transform: translateX(-60%);
-            }
-
-            100% {
-                transform: translateX(-30%);
-            }
-        }
-
-        @keyframes earLift {
-            0% {
-                transform: translateX(10px);
-            }
-
-            100% {
-                transform: translateX(0px);
-            }
-        }
-
         .icon-button {
             background: none;
             border: none;
@@ -409,15 +338,13 @@ session_start();
             </button>
             <div class="chat-title" id="nombre_amigo" data-receptor="" name="receptor_id">No hay chat seleccionado.</div>
             <button class="menu-button" id="openSidebar">
-                <svg class="menu-icon" viewBox="0 0 24 24">
-                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                <svg class="menu-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </button>
         </div>
 
         <div class="chat-messages">
-
-            <div class="loader"></div>
         </div>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -425,14 +352,6 @@ session_start();
         <div class="chat-input-container">
             <div class="chat-input-wrapper">
                 <input type="text" class="chat-input" placeholder="Escribe aquí..." name="contenido" id="type-area">
-                <button type="button" class="icon-button" id="spanCam" title="Abrir cámara">
-                    <span class="glyphicon glyphicon-camera"></span>
-                </button>
-                <button type="button" class="icon-button" id="spanFile" title="Adjuntar archivo">
-                    <span class="glyphicon glyphicon-paperclip"></span>
-                </button>
-                <!-- Input de archivo oculto-->
-                <input type="file" id="inputFile" style="visibility: hidden; position: absolute; width: 0; height: 0;">
                 <!-- Botón enviar -->
                 <button class="send-button" type="button" id="btn_enviar_mensaje">
                     <svg class="send-icon" viewBox="0 0 24 24">
@@ -441,8 +360,6 @@ session_start();
                 </button>
             </div>
         </div>
-
-
     </main>
 
     <script>
